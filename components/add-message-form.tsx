@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 
 interface AddMessageFormProps {
   paperId: string;
-  onMessageAdded?: () => void; // 메시지 등록 후 동작 콜백
+  onMessageAdded?: () => void;
 }
 
 export function AddMessageForm({ paperId, onMessageAdded }: AddMessageFormProps) {

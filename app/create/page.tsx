@@ -28,7 +28,7 @@ export default function CreateRollingPaper() {
         pscheck: pscheck,
       });
 
-      const createdId = res.data?.url ?? 1; // 생성된 ID 반환값 없을 경우 대비
+      const createdId = res.data?.url ?? 1;
       router.push(`/paper/${createdId}`);
     } catch (error) {
       console.error('롤링페이퍼 생성 실패:', error);

@@ -2,15 +2,16 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Share2 } from 'lucide-react';
+import { ArrowLeft, Share2, X } from 'lucide-react';
 
 import { Input } from '@/components/ui/input';
 import { AddMessageForm } from '@/components/add-message-form';
 import { MessageCard } from '@/components/message-card';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { api } from '@/api/api';
 import { SSEListener } from './SSEListener';
+import { toast } from 'sonner';
 
 interface Message {
   sender: string;
@@ -26,10 +27,29 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [paperTitle, setPaperTitle] = useState('');
+  const [password, setPassword] = useState('');
+  const [finishStatus, setFinishStatus] = useState<string | null>(null);
+  const [finishing, setFinishing] = useState(false);
+
   const paperData = {
     id: paperId,
     title: paperTitle,
     theme: 'birthday',
+  };
+
+  const finishRollingPaper = async () => {
+    setFinishing(true);
+    setFinishStatus(null);
+    try {
+      const res = await api.put(`/rolling-paper/${paperId}/finish`, { password });
+      setFinishStatus('종료 성공!');
+    } catch (err: any) {
+      setFinishStatus(err.response?.data?.message || '종료 실패: 비밀번호를 확인하세요');
+      console.log('dfa', err);
+      toast.error(err.response?.data?.error);
+    } finally {
+      setFinishing(false);
+    }
   };
 
   async function fetchMessages() {
@@ -88,26 +108,57 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
               돌아가기
             </Link>
           </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Share2 className="mr-2 h-4 w-4" />
-                공유하기
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <div className="p-4 text-center">
-                <h3 className="text-lg font-medium mb-2">롤링페이퍼 공유하기</h3>
-                <p className="mb-4 text-muted-foreground">아래 링크를 복사하여 공유하세요:</p>
-                <div className="flex">
-                  <Input readOnly value={`http://localhost:3000/paper/${paperData.id}`} className="mr-2" />
-                  <Button onClick={() => navigator.clipboard.writeText(`http://localhost:3000/paper/${paperData.id}`)}>
-                    복사
-                  </Button>
+          <div className="flex center gap-3">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <X className="mr-2 h-4 w-4" />
+                  종료하기
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <div className="p-4 text-center">
+                  <DialogTitle>롤링페이퍼 종료하기</DialogTitle> {/* 필수 */}
+                  <p className="mb-4 text-muted-foreground">비밀번호를 입력하세요</p>
+                  <div className="flex">
+                    <Input
+                      className="mr-2"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="비밀번호"
+                      disabled={finishing}
+                    />
+                    <Button onClick={finishRollingPaper} disabled={finishing}>
+                      {finishing ? '진행 중...' : '완료'}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogContent>
+            </Dialog>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Share2 className="mr-2 h-4 w-4" />
+                  공유하기
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <div className="p-4 text-center">
+                  <DialogTitle>롤링페이퍼 공유하기</DialogTitle> {/* 필수 */}
+                  <p className="mb-4 text-muted-foreground">아래 링크를 복사하여 공유하세요:</p>
+                  <div className="flex">
+                    <Input readOnly value={`http://localhost:3000/paper/${paperData.id}`} className="mr-2" />
+                    <Button
+                      onClick={() => navigator.clipboard.writeText(`http://localhost:3000/paper/${paperData.id}`)}
+                    >
+                      복사
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         </div>
 
         <div className="text-center mb-8">
@@ -122,10 +173,11 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
             messages.map((message, index) => <MessageCard key={index} message={message} />)
           )}
         </div>
-
-        <div className="max-w-2xl mx-auto">
-          <AddMessageForm paperId={paperId} onMessageAdded={fetchMessages} />
-        </div>
+        {!finishStatus && (
+          <div className="max-w-2xl mx-auto">
+            <AddMessageForm paperId={paperId} onMessageAdded={fetchMessages} />
+          </div>
+        )}
       </div>
     </main>
   );
