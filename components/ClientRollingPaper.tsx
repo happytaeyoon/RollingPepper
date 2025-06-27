@@ -115,7 +115,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
             </Link>
           </Button>
           <div className="flex center gap-3">
-            <Dialog open={finishStatus}>
+            <Dialog open={!finishStatus}>
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <X className="mr-2 h-4 w-4" />
