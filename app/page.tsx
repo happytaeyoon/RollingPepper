@@ -13,6 +13,7 @@ interface PaperGroup {
   finished: boolean;
   url: string;
   papers: any[];
+  color: string;
 }
 
 export default function Home() {
@@ -35,6 +36,10 @@ export default function Home() {
 
     fetchRollingPapers();
   }, []);
+  function lightenColor(color: string) {
+    // 예: 'bg-pink-100' → 'bg-pink-200'
+    return color.replace('100', '');
+  }
 
   return (
     <main className="container mx-auto py-8 px-4">
@@ -55,14 +60,20 @@ export default function Home() {
           <Link href={`/paper/${paper.url}`} key={paper.url} className="block">
             <Card
               className={`h-full transition-all hover:shadow-md ${
-                paper.finished ? 'bg-gray-100 text-gray-500 cursor-not-allowed opacity-70' : 'bg-white text-black'
+                paper.finished
+                  ? 'bg-gray-100 text-gray-500 cursor-not-allowed opacity-70'
+                  : `${paper.color ?? 'bg-white'} text-black`
               }`}
             >
               <CardHeader>
                 <CardTitle className="line-clamp-2">{paper.recipient}</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-32 bg-gradient-to-r from-pink-100 to-rose-100 rounded-md flex items-center justify-center">
+                <div
+                  className={`h-32 rounded-md flex items-center justify-center ${
+                    paper.color ? lightenColor(paper.color) : 'bg-gradient-to-r from-pink-100 to-rose-100'
+                  }`}
+                >
                   <span className="text-lg font-medium text-rose-600">{paper.papers.length}개의 메시지</span>
                 </div>
               </CardContent>

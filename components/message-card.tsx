@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card'
 interface Message {
   sender: string;
   content: string;
-  // color: string;
+  color?: string;
 }
 
 interface MessageCardProps {
@@ -18,7 +18,7 @@ export function MessageCard({ message }: MessageCardProps) {
   };
 
   return (
-    <Card className={` ${getRandomRotation()} hover:shadow-md transition-all`}>
+    <Card className={`${message.color ?? 'bg-pink-100'} ${getRandomRotation()} hover:shadow-md transition-all`}>
       <CardHeader className="pb-2">
         <div className="font-medium">{message.sender}</div>
       </CardHeader>

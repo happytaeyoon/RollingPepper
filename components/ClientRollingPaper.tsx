@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 interface Message {
   sender: string;
   content: string;
+  color?: string;
 }
 
 interface ClientRollingPaperProps {
@@ -31,6 +32,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
   const [finishing, setFinishing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [color, setColor] = useState('bg-pink-100'); // 기본 색상 상태
 
   const paperData = {
     id: paperId,
@@ -49,8 +51,8 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
       setIsFinished(true);
     } catch (err: any) {
       setFinishStatus(err.response?.data?.message || '종료 실패: 비밀번호를 확인하세요');
-      console.log('dfa', err);
-      toast.error(err.response?.data?.error);
+      console.error(err);
+      toast.error(err.response?.data?.error || '종료 실패');
     } finally {
       setFinishing(false);
     }
@@ -60,9 +62,17 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
     try {
       setLoading(true);
       const res = await api.get(`/rolling-paper/${paperId}`);
-      setMessages(res.data.papers || []);
+
+      // messages에 color 없으면 기본 color로 채워주기 (선택사항)
+      const loadedMessages: Message[] = (res.data.papers || []).map((msg: Message) => ({
+        ...msg,
+        color: msg.color || color,
+      }));
+
+      setMessages(loadedMessages);
       setPaperTitle(res.data.recipient || '메시지 1');
       setIsFinished(res.data.finished);
+      if (res.data.color) setColor(res.data.color); // 서버에서 기본 롤링페이퍼 색상 받기
     } catch (error) {
       console.error('메시지 로드 실패:', error);
     } finally {
@@ -78,27 +88,12 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
     fetchMessages();
   }, [paperId]);
 
-  const getBackgroundClass = () => {
-    switch (paperData.theme) {
-      case 'birthday':
-        return 'bg-gradient-to-r from-pink-50 to-rose-50';
-      case 'graduation':
-        return 'bg-gradient-to-r from-blue-50 to-sky-50';
-      case 'farewell':
-        return 'bg-gradient-to-r from-amber-50 to-yellow-50';
-      case 'thanks':
-        return 'bg-gradient-to-r from-green-50 to-emerald-50';
-      default:
-        return 'bg-gradient-to-r from-pink-50 to-rose-50';
-    }
-  };
-
   if (loading) {
     return <div className="container mx-auto py-8 px-4">로딩 중...</div>;
   }
 
   return (
-    <main className={`min-h-screen py-8 px-4 ${getBackgroundClass()}`}>
+    <main className={`min-h-screen py-8 px-4 ${color}`}>
       <SSEListener
         url={paperId}
         onEvent={(data) => {
@@ -127,7 +122,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
               </DialogTrigger>
               <DialogContent>
                 <div className="p-4 text-center">
-                  <DialogTitle>롤링페이퍼 종료하기</DialogTitle> {/* 필수 */}
+                  <DialogTitle>롤링페이퍼 종료하기</DialogTitle>
                   <p className="mb-4 text-muted-foreground">비밀번호를 입력하세요</p>
                   <div className="flex">
                     <Input
