@@ -53,7 +53,11 @@ export default function Home() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {rollingPapers.map((paper) => (
           <Link href={`/paper/${paper.url}`} key={paper.url} className="block">
-            <Card className="h-full transition-all hover:shadow-md">
+            <Card
+              className={`h-full transition-all hover:shadow-md ${
+                paper.finished ? 'bg-gray-100 text-gray-500 cursor-not-allowed opacity-70' : 'bg-white text-black'
+              }`}
+            >
               <CardHeader>
                 <CardTitle className="line-clamp-2">{paper.recipient}</CardTitle>
               </CardHeader>
