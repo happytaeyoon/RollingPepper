@@ -74,7 +74,7 @@ export default function Home() {
                     paper.color ? lightenColor(paper.color) : 'bg-gradient-to-r from-pink-100 to-rose-100'
                   }`}
                 >
-                  <span className="text-lg font-medium text-rose-600">{paper.papers.length}개의 메시지</span>
+                  <span className="text-lg font-medium text-black">{paper.papers.length}개의 메시지</span>
                 </div>
               </CardContent>
               <CardFooter className="text-sm text-muted-foreground">
