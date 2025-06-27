@@ -25,7 +25,6 @@ export function MessageCard({ message }: MessageCardProps) {
       <CardContent>
         <p className="whitespace-pre-wrap">{message.content}</p>
       </CardContent>
-      {/* <CardFooter className="text-xs text-muted-foreground pt-0">{message.createdAt}</CardFooter> */}
     </Card>
   );
 }
