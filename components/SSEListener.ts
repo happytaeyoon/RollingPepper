@@ -16,7 +16,7 @@ export function SSEListener({ url, onEvent, onPaperEvent }: SSEListenerProps) {
       if (eventSourceRef.current) {
         eventSourceRef.current.close();
       }
-
+      //test
       const fullUrl = `${process.env.NEXT_PUBLIC_API_URL}/sse?url=${url}&ngrok-skip-browser-warning=true`;
       const es = new EventSource(fullUrl);
 
