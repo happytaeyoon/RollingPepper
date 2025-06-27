@@ -11,10 +11,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/api/api';
 import { SEESender } from './SSESender';
 import { toast } from 'sonner';
+interface Message {
+  sender: string;
+  content: string;
+}
 
 interface AddMessageFormProps {
   paperId: string;
-  onMessageAdded?: () => void;
+  onMessageAdded?: (newMessage: Message) => void; // 인자 있는 콜백으로 변경
 }
 
 export function AddMessageForm({ paperId, onMessageAdded }: AddMessageFormProps) {
@@ -40,7 +44,7 @@ export function AddMessageForm({ paperId, onMessageAdded }: AddMessageFormProps)
 
       setSender('');
       setContent('');
-      onMessageAdded?.();
+      onMessageAdded?.({ sender, content });
     } catch (error) {
       console.error('메시지 등록 실패:', error);
       toast.error('메시지 등록에 실패했습니다.');

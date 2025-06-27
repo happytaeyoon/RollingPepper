@@ -16,7 +16,6 @@ import { toast } from 'sonner';
 interface Message {
   sender: string;
   content: string;
-  color?: string;
 }
 
 interface ClientRollingPaperProps {
@@ -64,6 +63,10 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
       setLoading(false);
     }
   }
+
+  const handleMessageAdded = (newMessage: Message) => {
+    setMessages((prev) => [...prev, newMessage]);
+  };
 
   useEffect(() => {
     fetchMessages();
@@ -175,7 +178,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
         </div>
         {!finishStatus && (
           <div className="max-w-2xl mx-auto">
-            <AddMessageForm paperId={paperId} onMessageAdded={fetchMessages} />
+            <AddMessageForm paperId={paperId} onMessageAdded={handleMessageAdded} />
           </div>
         )}
       </div>
