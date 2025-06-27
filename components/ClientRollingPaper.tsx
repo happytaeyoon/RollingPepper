@@ -154,12 +154,18 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
               </DialogTrigger>
               <DialogContent>
                 <div className="p-4 text-center">
-                  <DialogTitle>롤링페이퍼 공유하기</DialogTitle> {/* 필수 */}
+                  <DialogTitle>롤링페이퍼 공유하기</DialogTitle>
                   <p className="mb-4 text-muted-foreground">아래 링크를 복사하여 공유하세요:</p>
                   <div className="flex">
-                    <Input readOnly value={`http://localhost:3000/paper/${paperData.id}`} className="mr-2" />
+                    <Input
+                      readOnly
+                      value={`https://rolling-pepper.vercel.app/paper/${paperData.id}`}
+                      className="mr-2"
+                    />
                     <Button
-                      onClick={() => navigator.clipboard.writeText(`http://localhost:3000/paper/${paperData.id}`)}
+                      onClick={() =>
+                        navigator.clipboard.writeText(`https://rolling-pepper.vercel.app/paper/${paperData.id}`)
+                      }
                     >
                       복사
                     </Button>
