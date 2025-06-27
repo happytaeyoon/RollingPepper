@@ -44,7 +44,6 @@ export function AddMessageForm({ paperId, onMessageAdded }: AddMessageFormProps)
 
       setSender('');
       setContent('');
-      onMessageAdded?.({ sender, content });
     } catch (error) {
       console.error('메시지 등록 실패:', error);
       toast.error('메시지 등록에 실패했습니다.');
