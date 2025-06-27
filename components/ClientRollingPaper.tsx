@@ -29,6 +29,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
   const [password, setPassword] = useState('');
   const [finishStatus, setFinishStatus] = useState(false);
   const [finishing, setFinishing] = useState(false);
+  const [isFinished, setIsFinished] = useState(false);
 
   const paperData = {
     id: paperId,
@@ -58,6 +59,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
       const res = await api.get(`/rolling-paper/${paperId}`);
       setMessages(res.data.papers || []);
       setPaperTitle(res.data.recipient || '메시지 1');
+      setIsFinished(res.data.finished);
     } catch (error) {
       console.error('메시지 로드 실패:', error);
     } finally {
@@ -177,7 +179,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
             messages.map((message, index) => <MessageCard key={index} message={message} />)
           )}
         </div>
-        {!finishStatus && (
+        {!isFinished && (
           <div className="max-w-2xl mx-auto">
             <AddMessageForm paperId={paperId} onMessageAdded={handleMessageAdded} />
           </div>

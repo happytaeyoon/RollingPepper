@@ -18,7 +18,7 @@ interface Message {
 
 interface AddMessageFormProps {
   paperId: string;
-  onMessageAdded?: (newMessage: Message) => void; // 인자 있는 콜백으로 변경
+  onMessageAdded?: (newMessage: Message) => void;
 }
 
 export function AddMessageForm({ paperId, onMessageAdded }: AddMessageFormProps) {
