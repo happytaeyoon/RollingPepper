@@ -30,6 +30,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
   const [finishStatus, setFinishStatus] = useState(false);
   const [finishing, setFinishing] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const paperData = {
     id: paperId,
@@ -44,6 +45,8 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
       const res = await api.put(`/rolling-paper/${paperId}/finish`, { password });
       setFinishStatus(true);
       toast('종료 되었습니다');
+      setIsDialogOpen(false);
+      setIsFinished(true);
     } catch (err: any) {
       setFinishStatus(err.response?.data?.message || '종료 실패: 비밀번호를 확인하세요');
       console.log('dfa', err);
@@ -115,7 +118,7 @@ export default function ClientRollingPaper({ paperId }: ClientRollingPaperProps)
             </Link>
           </Button>
           <div className="flex center gap-3">
-            <Dialog open={!finishStatus}>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <X className="mr-2 h-4 w-4" />
